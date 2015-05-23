@@ -11,4 +11,20 @@ router.get('/userlist', function (req, res) {
         res.json(items);
     });
 });
-module.exports=router;
+router.post('/adduser', function (req, res) {
+    var db = req.db;
+    console.log(req.body);
+    db.collection('userlist').insert(req.body, function (err, result) {
+        res.send(
+            (err === null) ? {
+                msg: ''
+            } : {
+                msg: err
+            }
+        );
+    });
+});
+
+
+
+module.exports = router;
