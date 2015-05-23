@@ -16,7 +16,7 @@ var users = require('./routes/users');
 
 var app = express();
 
-// to make db accessable to routes
+// to make db accessable to routes add on 
 app.use(function (req, res, next) {
     req.db = db;
     next();
