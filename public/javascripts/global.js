@@ -11,7 +11,7 @@ var userListData = [];
 // DOM is ready
 $('document').ready(function () {
     $('#userList table tbody').on('click', 'td a.linkshowuser', showUserInfo);
-    $('#userList table tbody').on('click', 'td a.linkdeleteuser', showUserInfo);
+    $('#userList table tbody').on('click', 'td a.linkdeleteuser', deleteUser);
     $('#btnAddUser').on('click', addUser);
 
     // Call the main fucntion that injcts data into table 
@@ -60,12 +60,14 @@ function addUser(event) {
 
     // Super basic validation - increase errorCount variable if any fields are blank
     var errorCount = 0;
-    $('#addUser input').each(function(index, val) {
-        if($(this).val() === '') { errorCount++; }
+    $('#addUser input').each(function (index, val) {
+        if ($(this).val() === '') {
+            errorCount++;
+        }
     });
 
     // Check and make sure errorCount's still at zero
-    if(errorCount === 0) {
+    if (errorCount === 0) {
 
         // If it is, compile all user info into one object
         var newUser = {
@@ -83,7 +85,7 @@ function addUser(event) {
             data: newUser,
             url: '/users/adduser',
             dataType: 'JSON'
-        }).done(function( response ) {
+        }).done(function (response) {
 
             // Check for successful (blank) response
             if (response.msg === '') {
@@ -94,34 +96,51 @@ function addUser(event) {
                 // Update the table
                 populateTable();
 
-            }
-            else {
+            } else {
 
                 // If something goes wrong, alert the error message that our service returned
                 alert('Error: ' + response.msg);
 
             }
         });
-    }
-    else {
+    } else {
         // If errorCount is more than 0, error out
         alert('Please fill in all fields');
         return false;
     }
 };
 
+function deleteUser(event) {
 
+    event.preventDefault();
 
+    // Pop up a confirmation dialog
+    var confirmation = confirm('Are you sure you want to delete this user?');
 
+    // Check and make sure the user confirmed
+    if (confirmation === true) {
 
+        // If they did, do our delete
+        $.ajax({
+            type: 'DELETE',
+            url: '/users/deleteuser/' + $(this).attr('rel')
+        }).done(function (response) {
 
+            // Check for a successful (blank) response
+            if (response.msg === '') {} else {
+                alert('Error: ' + response.msg);
+            }
 
+            // Update the table
+            populateTable();
 
+        });
 
+    } else {
 
+        // If they said no to the confirm, do nothing
+        return false;
 
+    }
 
-
-
-
-
+};
